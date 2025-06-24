@@ -2,8 +2,10 @@
 
 use std::io::{self, Write};
 
+// 自動実装マクロ：トレイトを自動で実装する
 #[derive(Debug, Clone, PartialEq)]
 enum Expr {
+    // Box：データをヒップに置くためのスマートポインタ
     Num(i64),
     Add(Box<Expr>, Box<Expr>),
     Sub(Box<Expr>, Box<Expr>),
@@ -52,6 +54,7 @@ fn parse_add_sub(tokens: &mut Vec<String>) -> Expr {
     expr
 }
 
+// トークン列から*,/を解析して優先的に処理
 fn parse_mul_div(tokens: &mut Vec<String>) -> Expr {
     let mut expr = parse_primary(tokens);
     while let Some(op) = tokens.first() {
@@ -70,6 +73,8 @@ fn parse_mul_div(tokens: &mut Vec<String>) -> Expr {
     expr
 }
 
+// 基本単位の解析
+// ()の中を再帰的に解析する
 fn parse_primary(tokens: &mut Vec<String>) -> Expr {
     let token = tokens.remove(0);
     if token == "(" {
