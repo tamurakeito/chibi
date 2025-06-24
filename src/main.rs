@@ -11,6 +11,7 @@ enum Expr {
     Sub(Box<Expr>, Box<Expr>),
     Mul(Box<Expr>, Box<Expr>),
     Div(Box<Expr>, Box<Expr>),
+    Print(Box<Expr>),
 }
 
 // 字句解析: 入力をトークンに変換
@@ -77,7 +78,12 @@ fn parse_mul_div(tokens: &mut Vec<String>) -> Expr {
 // ()の中を再帰的に解析する
 fn parse_primary(tokens: &mut Vec<String>) -> Expr {
     let token = tokens.remove(0);
-    if token == "(" {
+    if token == "print" {
+        assert_eq!(tokens.remove(0), "(");
+        let expr = parse_expr(tokens);
+        assert_eq!(tokens.remove(0), ")");
+        Expr::Print(Box::new(expr))
+    } else if  token == "(" {
         let expr = parse_expr(tokens);
         assert_eq!(tokens.remove(0), ")");
         expr
@@ -94,11 +100,16 @@ fn eval(expr: &Expr) -> i64 {
         Expr::Sub(a, b) => eval(a) - eval(b),
         Expr::Mul(a, b) => eval(a) * eval(b),
         Expr::Div(a, b) => eval(a) / eval(b),
+                Expr::Print(e) => {
+            let v = eval(e);
+            println!("{}", v);
+            v
+        },
     }
 }
 
 fn main() {
-    println!("chibi 例: 1 + 2 * (3 + 4)\n終了: Ctrl+D");
+    println!("chibi: minimal programming language");
     loop {
         print!("> ");
         io::stdout().flush().unwrap();
