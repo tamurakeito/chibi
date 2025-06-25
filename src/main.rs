@@ -113,8 +113,7 @@ fn main() {
         let content = fs::read_to_string(filename).expect("ファイル読み込み失敗");
         let mut tokens = tokenize(&content);
         let ast = parse_expr(&mut tokens);
-        let result = eval(&ast);
-        println!("= {}", result);
+        eval(&ast);
     } else {
         println!("使い方: chibi run <filename.chibi>");
     }
