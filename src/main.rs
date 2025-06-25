@@ -1,11 +1,8 @@
-// chibi
+use std::env;
+use std::fs;
 
-use std::io::{self, Write};
-
-// 自動実装マクロ：トレイトを自動で実装する
 #[derive(Debug, Clone, PartialEq)]
 enum Expr {
-    // Box：データをヒップに置くためのスマートポインタ
     Num(i64),
     Add(Box<Expr>, Box<Expr>),
     Sub(Box<Expr>, Box<Expr>),
@@ -32,7 +29,7 @@ fn tokenize(input: &str) -> Vec<String> {
         .collect()
 }
 
-// 構文解析: 演算子の優先順位付き（中置記法対応）
+// 構文解析（中置記法）
 fn parse_expr(tokens: &mut Vec<String>) -> Expr {
     parse_add_sub(tokens)
 }
@@ -109,20 +106,16 @@ fn eval(expr: &Expr) -> i64 {
 }
 
 fn main() {
-    println!("chibi: minimal programming language");
-    loop {
-        print!("> ");
-        io::stdout().flush().unwrap();
-        let mut input = String::new();
-        if io::stdin().read_line(&mut input).is_err() {
-            break;
-        }
-        if input.trim().is_empty() {
-            continue;
-        }
-        let mut tokens = tokenize(&input);
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() == 3 && args[1] == "run" {
+        let filename = &args[2];
+        let content = fs::read_to_string(filename).expect("ファイル読み込み失敗");
+        let mut tokens = tokenize(&content);
         let ast = parse_expr(&mut tokens);
         let result = eval(&ast);
         println!("= {}", result);
+    } else {
+        println!("使い方: chibi run <filename.chibi>");
     }
 }
