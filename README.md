@@ -1,5 +1,3 @@
-コンパイル型ミニマルプログラミング言語
-
 chibiコンパイル
 ```
 rustc -o chibi src/main.rs
